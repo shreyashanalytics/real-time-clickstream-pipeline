@@ -63,8 +63,6 @@ stored in **ClickHouse**, and shown on a live **Apache Superset** dashboard.
 
 ## Quick start
 
-Prerequisites: Docker Desktop (8 GB+ RAM available to Docker) and Git.
-
 ```bash
 cp .env.example .env            # Windows: copy .env.example .env
 docker compose up --build -d    # first build ~5-10 min
@@ -101,14 +99,6 @@ SELECT * FROM v_late_data_audit;
    funnel (`v_funnel_30min`, dimension `event_type`, metric `SUM(events)`); big number `SUM(revenue)`.
 4. Dashboard -> add charts -> `...` -> **Set auto-refresh interval -> 10 seconds**.
 
-## Experiments (great for interviews)
-
-- **Faster/slower traffic:** `PRODUCER_INTERVAL=0.05` in `.env`, then `docker compose up -d producer`.
-- **Late data:** compare `v_late_data_audit`. `dropped_by_watermark` = purchases that arrived after
-  their window closed. Set `WATERMARK=5 minutes` and watch it shrink.
-- **Crash recovery:** `docker compose kill stream-processor`, wait, start it again; Spark resumes from its checkpoint.
-- **Duplicates:** `python producer/producer.py --duplicate-rate 0.05`. `events_raw` dedupes by `event_id`
-  (ReplacingMergeTree), but the window tables do not. Can you fix that? (Hint: dedupe inside Spark.)
 
 ## Design decisions
 
@@ -129,6 +119,3 @@ SELECT * FROM v_late_data_audit;
 | Tables missing in ClickHouse | They are created on the *first* start only; `make reset` then `make up` |
 | `port is already allocated` | Another program uses 8088/8123/9092/4040; stop it or change the left-hand port in `docker-compose.yml` |
 
-## Roadmap
-
-Schema Registry + Avro, dead-letter topic, exactly-once windows via Spark-side dedupe, Prometheus/Grafana monitoring, Kubernetes.
