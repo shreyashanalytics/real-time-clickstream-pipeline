@@ -1,0 +1,11 @@
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "N", "UP", "B"]
+ignore = ["N812"]  # PySpark convention: `functions as F`, `types as T`
+
+[tool.pytest.ini_options]
+pythonpath = ["producer"]
+testpaths = ["tests"]
